@@ -3,10 +3,14 @@ EnchantMobSpawner
 
 EnchantMobSpawner plugin for CraftBukkit.
 
-���炩���ߎw�肵���G���`�����g�����𑕔�����MOB���A�X�|�i�[���畦���悤�ɂ���v���O�C��
+あらかじめ指定したエンチャント装備を装備したMOBが、スポナーから沸くようにするプラグイン
 
-�y�R�}���h�z
-/ems reload - config.yml ���ēǂݍ��݂���
-/ems list - �g�p�\�ȃv���t�@�C�������ꗗ��\������
-/ems get (ProfileName) - �v���t�@�C�����̐ݒ��������Mob�𐶐�����X�|�i�[���擾����B
-/ems get (MobType) - skeleton, zombie, creeper �Ȃǂ��w��\�B�w�肵��MOB�����������A���ʂ̃X�|�i�[���擾����B
+【コマンド】
+
+/ems reload - config.yml を再読み込みする
+
+/ems list - 使用可能なプロファイル名を一覧を表示する
+
+/ems get (ProfileName) - プロファイル名の設定を持ったMobを生成するスポナーを取得する。
+
+/ems get (MobType) - skeleton, zombie, creeper などを指定可能。指定したMOBが生成される、普通のスポナーを取得する。
