@@ -1,0 +1,22 @@
+name: EnchantMobSpawner
+main: com.github.ucchyocean.ems.EnchantMobSpawner
+version: 0.1.0
+author: ucchy
+description: エンチャント装備をまとったMOBを発生させるスポナーのプラグイン
+#depend: []
+#softdepend: []
+commands:
+  enchantmobspawner:
+    description: EnchantMobSpawnerのコマンド
+    aliases: ems
+    usage: |
+           /<command> reload - config.yml を再読み込みします。
+           /<command> get (ProfileName) - config.yml にあらかじめ登録したプロファイルのスポナーを取得します。
+           /<command> get (MobName) - 普通のMobスポナーを取得します。
+           /<command> list - 指定可能なプロファイルの一覧を見ます。
+    permission: enchantmobspawner
+    permission-message: パーミッション "<permission>" が無いため、実行できません。
+permissions:
+  enchantmobspawner:
+    description: EnchantMobSpawnerコマンドの使用権限
+    default: op

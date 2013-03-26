@@ -1,0 +1,20 @@
+# Enchant Mob Spawner v0.1.0
+# @author     ucchy
+# @license    GPLv3
+# @copyright  Copyright ucchy 2013
+#
+# (ProfileName).mob: スポーンさせるMOBの種類を設定します。
+#       指定できる種類は、zombie, skeleton, creeper, ... など。
+# (ProfileName).kit: スポーンするMOBに装備させるアイテムを指定します。
+#       指定の順序は、(武器),(頭防具),(体防具),(レギンス防具),(足防具)
+#       指定する形式は、(アイテムID)^(E-ID)-(E-Level)@(Durability)
+#       「^(E-ID)-(E-Level)」の部分は、複数回指定可能です。
+#       「@(Durability)」のDurability（耐久消耗度）は、省略可能です。
+#       「0」を指定すると、その部分は装備をしません。
+
+SkeletonMonk:
+  mob: skeleton
+  kit: 0,0,299,300,0
+GreatZombie:
+  mob: zombie
+  kit: 267^16-5^17-5^18-5^19-2^20-2^34-3,306^0-4^1-4^3-4^4-4,307^0-4^1-4^3-4^4-4,308^0-4^1-4^3-4^4-4,309^0-4^1-4^3-4^4-4
