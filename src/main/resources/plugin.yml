@@ -1,6 +1,6 @@
 name: EnchantMobSpawner
 main: com.github.ucchyocean.ems.EnchantMobSpawner
-version: 0.1.0
+version: 0.2.0
 author: ucchy
 description: エンチャント装備をまとったMOBを発生させるスポナーのプラグイン
 #depend: []

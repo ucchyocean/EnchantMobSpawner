@@ -40,6 +40,10 @@ public class EnchantMobSpawner extends JavaPlugin {
         getCommand("EnchantMobSpawner").setExecutor(new EMSCommand());
     }
 
+    /**
+     * JavaPlugin.getFile() を、他のクラスから呼び出すためのメソッド
+     * @return JavaPlugin.getFile() の実行結果
+     */
     protected File getJarFile() {
         return this.getFile();
     }

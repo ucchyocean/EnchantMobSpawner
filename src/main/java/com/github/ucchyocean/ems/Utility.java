@@ -74,7 +74,6 @@ public class Utility {
                     writer.write(line);
                     writer.newLine();
                 }
-
             }
 
         } catch (FileNotFoundException e) {

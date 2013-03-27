@@ -7,11 +7,14 @@ package com.github.ucchyocean.ems;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
@@ -19,6 +22,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
@@ -57,6 +61,10 @@ public class EMSListener implements Listener {
             le.getEquipment().setChestplate(kit.get(2));
             le.getEquipment().setLeggings(kit.get(3));
             le.getEquipment().setBoots(kit.get(4));
+
+            MetadataValue value = new FixedMetadataValue(
+                    EnchantMobSpawner.instance, profile);
+            le.setMetadata("EMSProfile", value);
         }
     }
 
@@ -100,9 +108,37 @@ public class EMSListener implements Listener {
     }
 
     /**
-     * 指定したLocationから一番近いCreatureSpawnerのメタタグを取得する
+     * Entityが死亡したときに呼び出されるメソッド
+     * @param event
+     */
+    @EventHandler
+    public void onEntityDeath(EntityDeathEvent event) {
+
+        LivingEntity le = event.getEntity();
+
+        // メタデータを持っていなければ対象外
+        if ( !le.hasMetadata("EMSProfile") ) {
+            return;
+        }
+
+        // メタデータからプロファイル名を取得
+        List<MetadataValue> value = le.getMetadata("EMSProfile");
+        String profile = value.get(0).asString();
+
+        // kitと一致するドロップアイテムを削除する
+        ArrayList<ItemStack> kit = EnchantMobSpawner.config.getKit(profile);
+        ArrayList<ItemStack> drops = new ArrayList<ItemStack>(event.getDrops());
+        for ( ItemStack item : drops ) {
+            if ( containsSameItem(kit, item) ) {
+                event.getDrops().remove(item);
+            }
+        }
+    }
+
+    /**
+     * 指定したLocationから一番近いCreatureSpawnerのメタデータを取得する
      * @param location スポナーを探す基点
-     * @return 一番近いスポナーから取得したメタタグ
+     * @return 一番近いスポナーから取得したメタデータ
      */
     private String getProfileFromNearestSpawner(Location location) {
 
@@ -128,11 +164,54 @@ public class EMSListener implements Listener {
             }
         }
 
+        // 見つからなかったり、見つかったがメタデータが無い場合はnullを返して終了
         if ( spawner == null || !spawner.hasMetadata("EMSProfile") ) {
             return null;
         }
 
+        // メタデータを取得して終了
         List<MetadataValue> value = spawner.getMetadata("EMSProfile");
         return value.get(0).asString();
+    }
+
+    /**
+     * アイテムのIDと、エンチャントの内容が一致するかを調べる。
+     * Durability（耐久消耗度）の値は異なっていても無視される。
+     * @param item1
+     * @param item2
+     * @return 同じアイテムかどうか
+     */
+    private boolean isSameItem(ItemStack item1, ItemStack item2) {
+
+        if ( item1.getTypeId() != item2.getTypeId() ) {
+            return false;
+        }
+
+        Map<Enchantment, Integer> enchants = item1.getEnchantments();
+        Set<Enchantment> ench = enchants.keySet();
+        for ( Enchantment e : ench ) {
+            if ( item1.getEnchantmentLevel(e) !=
+                    item2.getEnchantmentLevel(e) ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * ArrayListに同じアイテムが含まれるかどうかを調べる。
+     * @param array
+     * @param key
+     * @return arrayにkeyが含まれるかどうか
+     */
+    private boolean containsSameItem(ArrayList<ItemStack> array, ItemStack key) {
+
+        for ( ItemStack i : array ) {
+            if ( isSameItem(i, key) ) {
+                return true;
+            }
+        }
+        return false;
     }
 }

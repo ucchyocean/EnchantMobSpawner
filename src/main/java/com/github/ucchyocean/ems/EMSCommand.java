@@ -53,6 +53,20 @@ public class EMSCommand implements CommandExecutor {
             }
             return true;
 
+        } else if ( args[0].equalsIgnoreCase("hand") ) {
+            // ems hand の実行処理
+
+            if ( !(sender instanceof Player) ) {
+                sender.sendMessage(PREERR + "このコマンドはゲーム内からのみ実行可能です。");
+                return true;
+            }
+
+            Player player = (Player)sender;
+
+            ItemStack item = player.getItemInHand();
+            sender.sendMessage("アイテム情報 < " + KitParser.getItemInfo(item) + " >");
+            return true;
+
         } else if ( args[0].equalsIgnoreCase("get") ) {
             // ems get の実行処理
 

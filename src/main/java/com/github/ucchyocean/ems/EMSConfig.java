@@ -7,6 +7,7 @@ package com.github.ucchyocean.ems;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -19,8 +20,10 @@ import org.bukkit.inventory.ItemStack;
  */
 public class EMSConfig {
 
-    private ArrayList<String> profileNames;
     private FileConfiguration config;
+    private ArrayList<String> profiles;
+    private Hashtable<String, EntityType> types;
+    private Hashtable<String, ArrayList<ItemStack>> kits;
 
     /**
      * config.yml の読み出し処理
@@ -40,13 +43,30 @@ public class EMSConfig {
         plugin.reloadConfig();
         config = plugin.getConfig();
 
-        profileNames = new ArrayList<String>();
+        profiles = new ArrayList<String>();
+        types = new Hashtable<String, EntityType>();
+        kits = new Hashtable<String, ArrayList<ItemStack>>();
+
         Iterator<String> i = config.getValues(false).keySet().iterator();
         while ( i.hasNext() ) {
+
             String profile = i.next();
             String type = config.getString(profile + ".mob");
             if ( isValidEntityType(type) ) {
-                profileNames.add(profile);
+
+                profiles.add(profile);
+
+                types.put(profile, EntityType.fromName(type));
+
+                ArrayList<ItemStack> kit = new ArrayList<ItemStack>();
+                String kit_temp = config.getString(profile + ".kit");
+                if ( kit_temp != null ) {
+                    kit = KitParser.parseClassItemData(kit_temp);
+                }
+                while ( kit.size() < 5 ) {
+                    kit.add(null);
+                }
+                kits.put(profile, kit);
             }
         }
     }
@@ -67,23 +87,12 @@ public class EMSConfig {
     }
 
     /**
-     * コンフィグから指定したパスの値を取得する
-     * @param path パス
-     * @return 設定値、存在しない場合はnullとなる
-     */
-    public String getStringValue(String path) {
-        return config.getString(path);
-    }
-
-    /**
      * コンフィグから指定されたプロファイルのMOBタイプを取得する
      * @param profile プロファイル
      * @return MOBタイプ
      */
     public EntityType getEntityType(String profile) {
-
-        String str = config.getString(profile + ".mob");
-        return EntityType.fromName(str);
+        return types.get(profile);
     }
 
     /**
@@ -92,13 +101,8 @@ public class EMSConfig {
      * @return キット
      */
     public ArrayList<ItemStack> getKit(String profile) {
-
-        String str = config.getString(profile + ".kit");
-        if ( str == null ) {
-            return null;
-        }
-
-        return KitParser.parseClassItemData(str);
+        // cloneを作って返す
+        return new ArrayList<ItemStack>(kits.get(profile));
     }
 
     /**
@@ -106,6 +110,6 @@ public class EMSConfig {
      * @return プロファイル名の一覧
      */
     public ArrayList<String> getProfileNames() {
-        return profileNames;
+        return profiles;
     }
 }
