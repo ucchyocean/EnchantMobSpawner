@@ -70,14 +70,14 @@ public class EMSCommand implements CommandExecutor {
         } else if ( args[0].equalsIgnoreCase("get") ) {
             // ems get の実行処理
 
-            if ( args.length <= 1 ) {
-                sender.sendMessage(PREERR + "プロファイル名を指定してください。");
-                sender.sendMessage(PREERR + "USAGE : /" + command.getName() + " get (ProfileName)");
+            if ( !(sender instanceof Player) ) {
+                sender.sendMessage(PREERR + "このコマンドはゲーム内からのみ実行可能です。");
                 return true;
             }
 
-            if ( !(sender instanceof Player) ) {
-                sender.sendMessage(PREERR + "このコマンドはゲーム内からのみ実行可能です。");
+            if ( args.length <= 1 ) {
+                sender.sendMessage(PREERR + "プロファイル名を指定してください。");
+                sender.sendMessage(PREERR + "USAGE : /" + label + " get (ProfileName)");
                 return true;
             }
 
