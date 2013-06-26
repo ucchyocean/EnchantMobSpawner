@@ -15,8 +15,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 /**
- * @author ucchy
  * コマンドクラス
+ * @author ucchy
  */
 public class EMSCommand implements CommandExecutor {
 

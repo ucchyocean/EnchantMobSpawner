@@ -14,6 +14,8 @@
 # (ProfileName).effect: スポーンするMOBに設定するポーション効果を指定します。
 #       指定する形式は、(エフェクトID)-(エフェクトレベル)
 #       コンマで複数指定可能です。例）1-10,8-10  → スピードlv10と跳躍lv10
+#       エフェクトIDは、Wikiなどを参照してください。
+#       http://ja.minecraftwiki.net/wiki/%E3%82%B9%E3%83%86%E3%83%BC%E3%82%BF%E3%82%B9%E5%8A%B9%E6%9E%9C
 
 SkeletonMonk:
   mob: skeleton

@@ -11,8 +11,8 @@ import java.util.logging.Logger;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * @author ucchy
  * Enchant Mob Spawner プラグインのメインクラス
+ * @author ucchy
  */
 public class EnchantMobSpawner extends JavaPlugin {
 

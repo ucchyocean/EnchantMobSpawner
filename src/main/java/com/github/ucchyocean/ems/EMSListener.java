@@ -8,6 +8,7 @@ package com.github.ucchyocean.ems;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -16,6 +17,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -25,8 +27,8 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffect;
 
 /**
- * @author ucchy
  * リスナークラス
+ * @author ucchy
  */
 public class EMSListener implements Listener {
 
@@ -54,11 +56,9 @@ public class EMSListener implements Listener {
                 EnchantMobSpawner.config.getKit(profile);
         ArrayList<PotionEffect> effect =
                 EnchantMobSpawner.config.getEffect(profile);
+        LivingEntity le = event.getEntity();
 
         if ( kit != null ) {
-
-            LivingEntity le = event.getEntity();
-
             // 装備品を設定
             le.getEquipment().setItemInHand(kit.get(0));
             le.getEquipment().setHelmet(kit.get(1));
@@ -75,9 +75,7 @@ public class EMSListener implements Listener {
         }
 
         if ( effect != null ) {
-
             // エフェクトを設定
-            LivingEntity le = event.getEntity();
             le.addPotionEffects(effect);
         }
     }
@@ -95,29 +93,56 @@ public class EMSListener implements Listener {
         }
 
         ItemStack item = event.getItemInHand();
-        CreatureSpawner spawner = (CreatureSpawner)event.getBlockPlaced().getState();
 
-        // メタデータが設定されているアイテムだったら、カスタムデータを埋め込む
-        if ( item.hasItemMeta() &&
-                item.getItemMeta().getDisplayName().contains("EnchantMobSpawner-") ) {
+        // カスタムアイテムでなければ用は無い
+        if ( !item.hasItemMeta() ||  !item.getItemMeta().hasDisplayName() ) {
+            return;
+        }
+
+        CreatureSpawner spawner = (CreatureSpawner)event.getBlockPlaced().getState();
+        String name = ChatColor.stripColor(item.getItemMeta().getDisplayName());
+
+        // カスタムデータを埋め込む
+        if ( name.startsWith("EnchantMobSpawner-") ) {
             String displayName = item.getItemMeta().getDisplayName();
             String profile = displayName.substring(displayName.indexOf("-") + 1);
             MetadataValue value = new FixedMetadataValue(
                     EnchantMobSpawner.instance, profile);
             spawner.setMetadata("EMSProfile", value);
             EntityType type = EnchantMobSpawner.config.getEntityType(profile);
+            int delay = EnchantMobSpawner.config.getDelay(profile);
 
             spawner.setSpawnedType(type);
+            spawner.setDelay(delay);
             spawner.update();
 
-        } else if ( item.hasItemMeta() &&
-                item.getItemMeta().getDisplayName().contains("Spawner-") ) {
+        } else if ( name.startsWith("Spawner-") ) {
             String displayName = item.getItemMeta().getDisplayName();
             String profile = displayName.substring(displayName.indexOf("-") + 1);
             EntityType type = EntityType.fromName(profile);
 
             spawner.setSpawnedType(type);
             spawner.update();
+        }
+    }
+
+    /**
+     * Blockを除去したときに呼び出されるメソッド
+     * @param event
+     */
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+
+        // スポナーでなければ用は無い
+        if ( event.getBlock().getType() != Material.MOB_SPAWNER ) {
+            return;
+        }
+
+        CreatureSpawner spawner = (CreatureSpawner)event.getBlock().getState();
+
+        // メタデータを除去しておく
+        if ( spawner.hasMetadata("EMSProfile") ) {
+            spawner.removeMetadata("EMSProfile", EnchantMobSpawner.instance);
         }
     }
 

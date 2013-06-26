@@ -16,8 +16,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
 /**
- * @author ucchy
  * EnchantMobSpawnerのコンフィグクラス
+ * @author ucchy
  */
 public class EMSConfig {
 
@@ -26,6 +26,7 @@ public class EMSConfig {
     private HashMap<String, EntityType> types;
     private HashMap<String, ArrayList<ItemStack>> kits;
     private HashMap<String, ArrayList<PotionEffect>> effects;
+    private HashMap<String, Integer> delays;
 
     /**
      * config.yml の読み出し処理
@@ -49,6 +50,7 @@ public class EMSConfig {
         types = new HashMap<String, EntityType>();
         kits = new HashMap<String, ArrayList<ItemStack>>();
         effects = new HashMap<String, ArrayList<PotionEffect>>();
+        delays = new HashMap<String, Integer>();
 
         Iterator<String> i = config.getValues(false).keySet().iterator();
         while ( i.hasNext() ) {
@@ -61,8 +63,8 @@ public class EMSConfig {
 
                 types.put(profile, EntityType.fromName(type));
 
-                String kit_temp = config.getString(profile + ".kit");
-                if ( kit_temp != null ) {
+                if ( config.contains(profile + ".kit") ) {
+                    String kit_temp = config.getString(profile + ".kit");
                     ArrayList<ItemStack> kit =
                             KitParser.parseClassItemData(kit_temp);
                     while ( kit.size() < 5 ) {
@@ -72,11 +74,17 @@ public class EMSConfig {
                     kits.put(profile, kit);
                 }
 
-                String effect_temp = config.getString(profile + ".effect");
-                if ( effect_temp != null ) {
+                if ( config.contains(profile + ".effect") ) {
+                    String effect_temp = config.getString(profile + ".effect");
                     ArrayList<PotionEffect> effect =
                             EffectParser.parseEffectData(effect_temp);
                     effects.put(profile, effect);
+                }
+
+                if ( config.contains(profile + ".delay") ) {
+                    int delay = config.getInt(profile + ".delay");
+                    if ( 1 <= delay )
+                        delays.put(profile, delay);
                 }
             }
         }
@@ -115,6 +123,18 @@ public class EMSConfig {
         }
         // cloneを作って返す
         return new ArrayList<PotionEffect>(effects.get(profile));
+    }
+
+    /**
+     * コンフィグから指定されたプロファイルのdelay値を取得する
+     * @param profile プロファイル
+     * @return delay値、該当の設定が無い場合は20
+     */
+    public int getDelay(String profile) {
+        if ( !delays.containsKey(profile) ) {
+            return 20;
+        }
+        return delays.get(profile);
     }
 
     /**
