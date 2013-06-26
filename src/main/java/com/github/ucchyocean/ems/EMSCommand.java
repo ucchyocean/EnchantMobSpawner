@@ -10,7 +10,6 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -87,7 +86,7 @@ public class EMSCommand implements CommandExecutor {
             String displayName = "";
             if ( EnchantMobSpawner.config.getProfileNames().contains(profile) ) {
                 displayName = "EnchantMobSpawner-" + profile;
-            } else if ( isValidEntityType(profile) ) {
+            } else if ( Utility.isValidEntityType(profile) ) {
                 displayName = "Spawner-" + profile;
             } else {
                 sender.sendMessage(PREERR + "指定されたプロファイル" + profile + "は無効です。");
@@ -109,20 +108,5 @@ public class EMSCommand implements CommandExecutor {
         }
 
         return false;
-    }
-
-    /**
-     * 指定の文字列は、EntityTypeとして指定可能な内容かどうかを確認する
-     * @param value 検査する文字列
-     * @return EntityTypeとして指定可能かどうか
-     */
-    private boolean isValidEntityType(String value) {
-
-        if ( value == null ) {
-            return false;
-        }
-
-        EntityType type = EntityType.fromName(value);
-        return (type != null);
     }
 }

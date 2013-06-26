@@ -7,12 +7,13 @@ package com.github.ucchyocean.ems;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 
 /**
  * @author ucchy
@@ -22,8 +23,9 @@ public class EMSConfig {
 
     private FileConfiguration config;
     private ArrayList<String> profiles;
-    private Hashtable<String, EntityType> types;
-    private Hashtable<String, ArrayList<ItemStack>> kits;
+    private HashMap<String, EntityType> types;
+    private HashMap<String, ArrayList<ItemStack>> kits;
+    private HashMap<String, ArrayList<PotionEffect>> effects;
 
     /**
      * config.yml の読み出し処理
@@ -44,46 +46,40 @@ public class EMSConfig {
         config = plugin.getConfig();
 
         profiles = new ArrayList<String>();
-        types = new Hashtable<String, EntityType>();
-        kits = new Hashtable<String, ArrayList<ItemStack>>();
+        types = new HashMap<String, EntityType>();
+        kits = new HashMap<String, ArrayList<ItemStack>>();
+        effects = new HashMap<String, ArrayList<PotionEffect>>();
 
         Iterator<String> i = config.getValues(false).keySet().iterator();
         while ( i.hasNext() ) {
 
             String profile = i.next();
             String type = config.getString(profile + ".mob");
-            if ( isValidEntityType(type) ) {
+            if ( Utility.isValidEntityType(type) ) {
 
                 profiles.add(profile);
 
                 types.put(profile, EntityType.fromName(type));
 
-                ArrayList<ItemStack> kit = new ArrayList<ItemStack>();
                 String kit_temp = config.getString(profile + ".kit");
                 if ( kit_temp != null ) {
-                    kit = KitParser.parseClassItemData(kit_temp);
+                    ArrayList<ItemStack> kit =
+                            KitParser.parseClassItemData(kit_temp);
+                    while ( kit.size() < 5 ) {
+                        // 5個に満たない場合は、5個までnullで埋める
+                        kit.add(null);
+                    }
+                    kits.put(profile, kit);
                 }
-                while ( kit.size() < 5 ) {
-                    kit.add(null);
+
+                String effect_temp = config.getString(profile + ".effect");
+                if ( effect_temp != null ) {
+                    ArrayList<PotionEffect> effect =
+                            EffectParser.parseEffectData(effect_temp);
+                    effects.put(profile, effect);
                 }
-                kits.put(profile, kit);
             }
         }
-    }
-
-    /**
-     * 指定の文字列は、EntityTypeとして指定可能な内容かどうかを確認する
-     * @param value 検査する文字列
-     * @return EntityTypeとして指定可能かどうか
-     */
-    private boolean isValidEntityType(String value) {
-
-        if ( value == null ) {
-            return false;
-        }
-
-        EntityType type = EntityType.fromName(value);
-        return (type != null);
     }
 
     /**
@@ -98,11 +94,27 @@ public class EMSConfig {
     /**
      * コンフィグから指定されたプロファイルのキットを取得する
      * @param profile プロファイル
-     * @return キット
+     * @return キット、該当の設定が無い場合はnull
      */
     public ArrayList<ItemStack> getKit(String profile) {
+        if ( !kits.containsKey(profile) ) {
+            return null;
+        }
         // cloneを作って返す
         return new ArrayList<ItemStack>(kits.get(profile));
+    }
+
+    /**
+     * コンフィグから指定されたプロファイルのエフェクトを取得する
+     * @param profile プロファイル
+     * @return エフェクト、該当の設定が無い場合はnull
+     */
+    public ArrayList<PotionEffect> getEffect(String profile) {
+        if ( !effects.containsKey(profile) ) {
+            return null;
+        }
+        // cloneを作って返す
+        return new ArrayList<PotionEffect>(effects.get(profile));
     }
 
     /**

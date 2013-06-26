@@ -18,6 +18,7 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.EntityType;
 
 /**
  * @author ucchy
@@ -160,5 +161,20 @@ public class Utility {
             }
         }
         return false;
+    }
+
+    /**
+     * 指定の文字列は、EntityTypeとして指定可能な内容かどうかを確認する
+     * @param value 検査する文字列
+     * @return EntityTypeとして指定可能かどうか
+     */
+    public static boolean isValidEntityType(String value) {
+
+        if ( value == null ) {
+            return false;
+        }
+
+        EntityType type = EntityType.fromName(value);
+        return (type != null);
     }
 }

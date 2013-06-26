@@ -1,4 +1,4 @@
-# Enchant Mob Spawner v0.2.0
+# Enchant Mob Spawner v0.3.0
 # @author     ucchy
 # @license    GPLv3
 # @copyright  Copyright ucchy 2013
@@ -11,6 +11,9 @@
 #       「^(E-ID)-(E-Level)」の部分は、複数回指定可能です。
 #       「@(Durability)」のDurability（耐久消耗度）は、省略可能です。
 #       「0」を指定すると、その部分は装備をしません。
+# (ProfileName).effect: スポーンするMOBに設定するポーション効果を指定します。
+#       指定する形式は、(エフェクトID)-(エフェクトレベル)
+#       コンマで複数指定可能です。例）1-10,8-10  → スピードlv10と跳躍lv10
 
 SkeletonMonk:
   mob: skeleton
@@ -18,3 +21,7 @@ SkeletonMonk:
 GreatZombie:
   mob: zombie
   kit: 267^16-5^17-5^18-5^19-2^20-2^34-3,306^0-4^1-4^3-4^4-4,307^0-4^1-4^3-4^4-4,308^0-4^1-4^3-4^4-4,309^0-4^1-4^3-4^4-4
+  effect: 5-3
+HighSpeedCreeper:
+  mob: creeper
+  effect: 1-10,8-10

@@ -22,6 +22,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.potion.PotionEffect;
 
 /**
  * @author ucchy
@@ -49,11 +50,16 @@ public class EMSListener implements Listener {
         }
 
         // プロファイル名からキットを取得し、装備に設定していく
-        ArrayList<ItemStack> kit = EnchantMobSpawner.config.getKit(profile);
-        if ( kit.size() >= 5 ) {
+        ArrayList<ItemStack> kit =
+                EnchantMobSpawner.config.getKit(profile);
+        ArrayList<PotionEffect> effect =
+                EnchantMobSpawner.config.getEffect(profile);
+
+        if ( kit != null ) {
+
+            LivingEntity le = event.getEntity();
 
             // 装備品を設定
-            LivingEntity le = event.getEntity();
             le.getEquipment().setItemInHand(kit.get(0));
             le.getEquipment().setHelmet(kit.get(1));
             le.getEquipment().setChestplate(kit.get(2));
@@ -66,6 +72,13 @@ public class EMSListener implements Listener {
             le.getEquipment().setChestplateDropChance(0);
             le.getEquipment().setLeggingsDropChance(0);
             le.getEquipment().setBootsDropChance(0);
+        }
+
+        if ( effect != null ) {
+
+            // エフェクトを設定
+            LivingEntity le = event.getEntity();
+            le.addPotionEffects(effect);
         }
     }
 

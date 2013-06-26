@@ -20,8 +20,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 /**
+ * アイテムキットの解析クラス
  * @author ucchy
- *
  */
 public class KitParser {
 
