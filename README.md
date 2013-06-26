@@ -61,7 +61,7 @@ HighSpeedCreeper:
 
 <h2>スクリーンショット</h2>
 
-<img src="2013-03-27_01.39.37.png" width="854" height="480" border="0" />
+<img src="https://github.com/ucchyocean/EnchantMobSpawner/blob/master/release/ss1.png?raw=true" border="0" />
 
 <h2>ソースコード</h2>
 
