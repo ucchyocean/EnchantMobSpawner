@@ -115,6 +115,10 @@ public class EMSListener implements Listener {
             spawner.setSpawnedType(type);
             spawner.setDelay(delay);
             spawner.update();
+            
+            // ファイルに保存して永続化する
+            EnchantMobSpawner.locationData.set(
+                    spawner.getLocation(), profile);
 
         } else if ( name.startsWith("Spawner-") ) {
             String displayName = item.getItemMeta().getDisplayName();
@@ -132,17 +136,28 @@ public class EMSListener implements Listener {
      */
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
+        removeMetadata(event.getBlock());
+    }
+    
+    /**
+     * ブロックのメタデータを削除する
+     * @param block ブロック
+     */
+    private void removeMetadata(Block block) {
 
         // スポナーでなければ用は無い
-        if ( event.getBlock().getType() != Material.MOB_SPAWNER ) {
+        if ( block.getType() != Material.MOB_SPAWNER ) {
             return;
         }
 
-        CreatureSpawner spawner = (CreatureSpawner)event.getBlock().getState();
+        CreatureSpawner spawner = (CreatureSpawner)block.getState();
 
         // メタデータを除去しておく
         if ( spawner.hasMetadata("EMSProfile") ) {
-            spawner.removeMetadata("EMSProfile", EnchantMobSpawner.instance);
+            spawner.removeMetadata("EMSProfile", 
+                    EnchantMobSpawner.instance);
+            EnchantMobSpawner.locationData.set(
+                    spawner.getLocation(), null);
         }
     }
 

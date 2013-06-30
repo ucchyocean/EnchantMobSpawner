@@ -18,6 +18,7 @@ public class EnchantMobSpawner extends JavaPlugin {
 
     protected static EnchantMobSpawner instance;
     protected static EMSConfig config;
+    protected static EMSLocationData locationData;
     protected static Logger logger;
 
     /**
@@ -32,6 +33,9 @@ public class EnchantMobSpawner extends JavaPlugin {
         // コンフィグのロード
         config = new EMSConfig();
         config.reloadConfig();
+        
+        locationData = new EMSLocationData();
+        locationData.setProfiles();
 
         // リスナーの登録
         getServer().getPluginManager().registerEvents(new EMSListener(), this);
